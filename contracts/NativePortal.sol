@@ -14,7 +14,7 @@ contract NativePortal is BasePortal {
     }
 
     function () external payable {
-        Paid(msg.sender, msg.value);
+        emit Paid(msg.sender, msg.value);
     }
 
     function enter() public payable {
@@ -29,7 +29,7 @@ contract NativePortal is BasePortal {
         address[] memory recovered = recoverAddresses(hash, _signatures);
         require(verifyValidators(recovered), "Validator verification failed.");
         foreignTransactions[_txnHash] = true;
-        msg.sender.send(_amount);
+        msg.sender.transfer(_amount);
         emit ExitBridgeEvent(msg.sender, _amount);
     }
 
