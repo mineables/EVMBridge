@@ -1,7 +1,7 @@
 const Web3 = require('web3')
 const web3 = new Web3()
-var ERC20Bridge = artifacts.require("./ERC20Bridge.sol")
-var NativeBridge = artifacts.require("./NativeBridge.sol")
+var ERC20Portal = artifacts.require("./ERC20Portal.sol")
+var NativePortal = artifacts.require("./NativePortal.sol")
 var Bitcoin = artifacts.require("./_0xBitcoinToken.sol")
 
 contract('ERC20 To Native Tests [testERC20ToNative.js]', async (accounts) => {
@@ -11,10 +11,10 @@ contract('ERC20 To Native Tests [testERC20ToNative.js]', async (accounts) => {
 
 	before(async() => {
 	    // runs before all tests in this block
-		let startingBalance = await NativeBridge.web3.eth.getBalance(bridgeUser) - web3.utils.toWei('1', 'ether')
+		let startingBalance = await NativePortal.web3.eth.getBalance(bridgeUser) - web3.utils.toWei('1', 'ether')
 		let bal = web3.utils.toBN(parseInt(startingBalance) )
 		if(bal.gt(web3.utils.toWei('1', 'ether'))){
-			await NativeBridge.web3.eth.sendTransaction({from: bridgeUser, to: accounts[6], value: startingBalance })
+			await NativePortal.web3.eth.sendTransaction({from: bridgeUser, to: accounts[6], value: startingBalance })
 		}
 	})
 
@@ -24,12 +24,12 @@ contract('ERC20 To Native Tests [testERC20ToNative.js]', async (accounts) => {
 
 	it("configure the bridges", async () => {
 		console.log('Note: these tests only cover whole value number transfers')
-		let home = await NativeBridge.deployed()
-		let foreign = await ERC20Bridge.deployed()
+		let home = await NativePortal.deployed()
+		let foreign = await ERC20Portal.deployed()
 		let bitcoin = await Bitcoin.deployed()
 
 		await home.send(21000000 * Math.pow(10, 18), {from: accounts[0]})
-		console.log('Setup - home.totalSupply: ', readable( ( await NativeBridge.web3.eth.getBalance(home.address) ).toNumber()) )
+		console.log('Setup - home.totalSupply: ', readable( ( await NativePortal.web3.eth.getBalance(home.address) ).toNumber()) )
 
 		let tokensIn0xBTC = STARTING_BALANCE * Math.pow(10, 8)
 		await bitcoin.transfer(bridgeUser, tokensIn0xBTC)
@@ -47,11 +47,11 @@ contract('ERC20 To Native Tests [testERC20ToNative.js]', async (accounts) => {
 	})
 
 	it("should test transfer of 300 from foreign to home", async () => {
-		let home = await NativeBridge.deployed()
-		let foreign = await ERC20Bridge.deployed()
+		let home = await NativePortal.deployed()
+		let foreign = await ERC20Portal.deployed()
 		let bitcoin = await Bitcoin.deployed()
 
-		let homeBalance = readable( ( await NativeBridge.web3.eth.getBalance(bridgeUser) ).toNumber() )
+		let homeBalance = readable( ( await NativePortal.web3.eth.getBalance(bridgeUser) ).toNumber() )
 		let bitcoinBalance = readable( ( await bitcoin.balanceOf(bridgeUser) ).toNumber(), 8 )
 		console.log('Before - home.balanceOf: ', parseInt(homeBalance) )
 		console.log('Before - bitcoin.balanceOf: ', bitcoinBalance )
@@ -86,7 +86,7 @@ contract('ERC20 To Native Tests [testERC20ToNative.js]', async (accounts) => {
 				// Step 3: User calls exit on foreign contract with signed transactions
 				await home.exit(result.transactionHash, foreign.address, tokensInNative, signatures, {from: bridgeUser})
 
-				let homeBalance = readable( ( await NativeBridge.web3.eth.getBalance(bridgeUser) ).toNumber() )
+				let homeBalance = readable( ( await NativePortal.web3.eth.getBalance(bridgeUser) ).toNumber() )
 				let bitcoinBalance = readable( ( await bitcoin.balanceOf(bridgeUser) ).toNumber(), 8 )
 				console.log('After - home.balanceOf: ', parseInt(homeBalance) )
 				console.log('After - bitcoin.balanceOf: ', bitcoinBalance )
@@ -99,8 +99,8 @@ contract('ERC20 To Native Tests [testERC20ToNative.js]', async (accounts) => {
 	})
 
 	it("should test transfer of 200 from home to foreign", async () => {
-		let home = await NativeBridge.deployed()
-		let foreign = await ERC20Bridge.deployed()
+		let home = await NativePortal.deployed()
+		let foreign = await ERC20Portal.deployed()
 		let bitcoin = await Bitcoin.deployed()
 				
 		// important to remember that 0xBitcoin only has 8 decimals
@@ -108,7 +108,7 @@ contract('ERC20 To Native Tests [testERC20ToNative.js]', async (accounts) => {
 		let tokensIn0xBTC = tokens * Math.pow(10, 8)
 		let tokensInNative = tokens * Math.pow(10, 18)
 		
-		let homeBalance = readable( ( await NativeBridge.web3.eth.getBalance(bridgeUser) ).toNumber() )
+		let homeBalance = readable( ( await NativePortal.web3.eth.getBalance(bridgeUser) ).toNumber() )
 		let bitcoinBalance = readable( ( await bitcoin.balanceOf(bridgeUser) ).toNumber(), 8 )
 		console.log('Before - home.balanceOf: ', parseInt(homeBalance) )
 		console.log('Before - bitcoin.balanceOf: ', bitcoinBalance )
@@ -134,7 +134,7 @@ contract('ERC20 To Native Tests [testERC20ToNative.js]', async (accounts) => {
 				// Step 3: User calls exit on foreign contract with signed transactions
 				await foreign.exit(result.transactionHash, home.address, tokensIn0xBTC, signatures, {from: bridgeUser})
 
-				let homeBalance = readable( ( await NativeBridge.web3.eth.getBalance(bridgeUser) ).toNumber() )
+				let homeBalance = readable( ( await NativePortal.web3.eth.getBalance(bridgeUser) ).toNumber() )
 				let bitcoinBalance = readable( ( await bitcoin.balanceOf(bridgeUser) ).toNumber(), 8 )
 				console.log('After - home.balanceOf: ', parseInt(homeBalance) )
 				console.log('After - bitcoin.balanceOf: ', bitcoinBalance )
