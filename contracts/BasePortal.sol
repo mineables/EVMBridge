@@ -4,21 +4,21 @@ import './SignatureUtils.sol';
 import 'openzeppelin-solidity/contracts/ownership/Ownable.sol';
 
 contract BasePortal is SignatureUtils, Ownable {
-	address[] public validators;
-	address public foreignContract;
-	mapping (bytes32 => bool) foreignTransactions;
+    address[] public validators;
+    address public foreignContract;
+    mapping (bytes32 => bool) foreignTransactions;
 
-	event EnterBridgeEvent(address from, uint256 amount);
+    event EnterBridgeEvent(address from, uint256 amount);
     event ExitBridgeEvent(address sender, uint256 amount);
     event Mint(address indexed to, uint256 amount);
-	event Burn(address indexed burner, uint256 value);
-
-	function addValidator(address _validator) public onlyOwner {
+    event Burn(address indexed burner, uint256 value);
+    
+    function addValidator(address _validator) public onlyOwner {
         validators.push(_validator);
     }
 
     function pair(address _foreignContract) public onlyOwner {
-    	foreignContract = _foreignContract;
+        foreignContract = _foreignContract;
     }
 
     function verifyValidators(address[] recovered) internal view returns (bool) {
