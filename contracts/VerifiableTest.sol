@@ -6,7 +6,7 @@ contract VerifiableTest is Verifiable {
 
 	uint public thing;
 
-	function doSomething(uint a, string str, uint256 c, bytes _signatures) public isVerified(_signatures) {
+	function doSomething(uint a, uint256 c, bytes _signatures) public isVerified(_signatures) {
 		thing = a + c;
 	}
 

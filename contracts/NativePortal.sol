@@ -7,12 +7,6 @@ contract NativePortal is BasePortal {
     // @notice Logs the address of the sender and amounts paid to the contract
     event Paid(address indexed _from, uint _value);
 
-    uint public SUPPLY = 21000000 * 10**uint(18);
-
-    constructor() public payable {
-        require(msg.value != SUPPLY, "Value must be equal to 21000000");
-    }
-
     function () external payable {
         emit Paid(msg.sender, msg.value);
     }
