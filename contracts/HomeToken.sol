@@ -1,15 +1,15 @@
 pragma solidity ^0.4.24;
 
-import './Bridgeable.sol';
+import './BridgeableToken.sol';
 
-contract HomeToken is Bridgeable {
-    string public name = "ExampleToken"; 
-    string public symbol = "FIX";
+contract HomeToken is BridgeableToken {
+    string public name = "ExampleToken1"; 
+    string public symbol = "EX1";
     uint public decimals = 18;
     uint public INITIAL_SUPPLY = 10000 * (10 ** decimals);
 
     constructor() public {
-        totalSupply_ = INITIAL_SUPPLY / 2;
-        balances[msg.sender] = totalSupply_;
+        totalSupply_ = 0;
+        //balances[msg.sender] = totalSupply_;
     }
 }

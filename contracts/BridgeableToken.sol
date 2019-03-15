@@ -4,7 +4,7 @@ import 'openzeppelin-solidity/contracts/token/ERC20/StandardToken.sol';
 import './SignatureUtils.sol';
 import './Ownable.sol';
 
-contract Bridgeable is StandardToken, SignatureUtils, Ownable {
+contract BridgeableToken is StandardToken, SignatureUtils, Ownable {
 	address[] public validators;
 	address public foreignContract;
 	mapping (bytes32 => bool) foreignTransactions;
