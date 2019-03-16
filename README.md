@@ -55,8 +55,8 @@ TOKEN_CONTRACT=0x576b32b5f58c3B80385f13A8479b33F881F9906d
 
 * Note: Since the state of these transactions is stored 100% between the chains, you can call http://127.0.0.1:4000/transactions/0xYOUR-ADDRESS anytime to get a complete view of the bridge's transactions.
 
-1. Transfer 0xBitcoin to the Token Portal: bitcoin.approveAndCall(TokenPortal.address, tokens, 0x0, {from: bridgeUser})
-2. Capture the transaction hash from step one and use it to build a curl command to the bridge:
+1. Transfer 0xBitcoin to the Token Portal: bitcoin.approveAndCall(TokenPortal.address, tokens, 0x0)
+2. Capture the transaction hash from step one and use it to build a 'foreign/verify' curl command to the bridge:
     ```
     curl -d '{ "txnHash": "0x62382efda78ab186b9e30da9b4ac932b6e79cf7c208eeeebf1bfab3522638476" }' -H "Content-Type: application/json" http://127.0.0.1:4000/foreign/verify
     ```
@@ -80,4 +80,26 @@ TOKEN_CONTRACT=0x576b32b5f58c3B80385f13A8479b33F881F9906d
     ```
 
 # Performing a swap from 'Chainnet' to 'Mainnet'
-1. 
+1. Enter the bridge from the chainnet side: tokenpeg.enter(tokens)
+2. Capture the transaction hash from the previous step and use it to build a 'home/verify' curl command to the bridge
+    ```
+    curl -d '{ "txnHash": "0x008cb7525740933c82819aa5c79bcfb05a479af547138a0a0f9c67a7282e1354" }' -H "Content-Type: application/json" http://127.0.0.1:4000/home/verify
+    
+    ```
+    results:
+    ```
+    {
+        "transactionHash": "0x008cb7525740933c82819aa5c79bcfb05a479af547138a0a0f9c67a7282e1354",
+        "foreignContract": "0x6bA494Cc76636bb134BBC3eD4743Fb9b8172c8DF",
+        "tokens": 1000000000,
+        "signatures": "0xf78bd31638000165943e943ce54b59874d9d53d4f35b3f0f2c4da1207265cc142ff2c84a8f72be983f4e6e3c00a3ebe0113f8953319d9f392c7d51f72197b0bd1b"
+    }
+    ```
+3. Complete the transfer to Mainnet by calling the chain's Portal contract's exit() method, using the parameters from the enter() transaction in the previous step.
+    ```
+    portal.exit(transactionHash, PegToken.address, tokens, signatures)
+    ```
+    Check that your balance is now reflected in the target mainnet token contract
+    ```
+    erc20.balanceOf(0xyour_address)
+    ```

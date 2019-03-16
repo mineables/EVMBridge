@@ -53,10 +53,12 @@ app.get('/transactions/:address', asyncMiddleware(async (request, response, next
         toBlock: 'latest'
     })
     let homeEnterLogs = await bridgeableToken.getPastEvents('EnterBridgeEvent', {
+        filter: { from: request.params.address },
         fromBlock: 0,
         toBlock: 'latest'
     })
     let homeExitLogs = await bridgeableToken.getPastEvents('ExitBridgeEvent', {
+        filter: { from: request.params.address },
         fromBlock: 0,
         toBlock: 'latest'
     })

@@ -45,7 +45,7 @@ contract('ERC20Portal To Bridgeable Token Tests [testERC20ToERC20.js]', async (a
         let bitcoin = await Bitcoin.deployed()
 
         
-        printState('Before', home, foreign, bitcoin, bridgeUser)
+        await printState('Before', home, foreign, bitcoin, bridgeUser)
         let homeBalance = readable((await home.balanceOf(bridgeUser)))
         let bitcoinBalance = readable((await bitcoin.balanceOf(bridgeUser)), 8)
         assert.equal(STARTING_BALANCE, parseInt(homeBalance) + parseInt(bitcoinBalance))
@@ -63,7 +63,7 @@ contract('ERC20Portal To Bridgeable Token Tests [testERC20ToERC20.js]', async (a
         // single call here - doesnt play well with truffle
         // let enterTxn = await bitcoin.approveAndCall(foreign.address, tokensIn0xBTC, web3.utils.toHex(0), {from: bridgeUser})
 
-        printState('Middle', home, foreign, bitcoin, bridgeUser)
+        await printState('Middle', home, foreign, bitcoin, bridgeUser)
 
         // We can loop through result.logs to see if we triggered the event.
         for (var i = 0; i < enterTxn.logs.length; i++) {
@@ -84,7 +84,7 @@ contract('ERC20Portal To Bridgeable Token Tests [testERC20ToERC20.js]', async (a
 
                 let homeBalance = readable((await home.balanceOf(bridgeUser)))
                 let bitcoinBalance = readable((await bitcoin.balanceOf(bridgeUser)), 8)
-                printState('After', home, foreign, bitcoin, bridgeUser)
+                await printState('After', home, foreign, bitcoin, bridgeUser)
                 assert.equal(STARTING_BALANCE, parseInt(homeBalance) + parseInt(bitcoinBalance))
 
                 break
@@ -92,7 +92,7 @@ contract('ERC20Portal To Bridgeable Token Tests [testERC20ToERC20.js]', async (a
         }
 
     })
-/*
+
     it("should test transfer of 200 from chainnet to mainnet", async () => {
         let home = await HomeToken.deployed()
         let foreign = await ERC20Portal.deployed()
@@ -103,13 +103,15 @@ contract('ERC20Portal To Bridgeable Token Tests [testERC20ToERC20.js]', async (a
         let tokensIn0xBTC = tokens * Math.pow(10, 8)
         let tokensInNative = tokens * Math.pow(10, 18)
 
-        printState('Before', home, foreign, bitcoin, bridgeUser)
+        await printState('Before', home, foreign, bitcoin, bridgeUser)
         let homeBalance = readable((await home.balanceOf(bridgeUser)))
         let bitcoinBalance = readable((await bitcoin.balanceOf(bridgeUser)), 8)
         assert.equal(STARTING_BALANCE, parseInt(homeBalance) + parseInt(bitcoinBalance))
 
         // Step 1: User calls enter on foreign
         let enterTxn = await home.enter(tokensInNative.toString(), { from: bridgeUser })
+
+        await printState('Middle', home, foreign, bitcoin, bridgeUser)
 
         // We can loop through result.logs to see if we triggered the event.
         for (var i = 0; i < enterTxn.logs.length; i++) {
@@ -129,7 +131,7 @@ contract('ERC20Portal To Bridgeable Token Tests [testERC20ToERC20.js]', async (a
 
                 let homeBalance = readable((await home.balanceOf(bridgeUser)))
                 let bitcoinBalance = readable((await bitcoin.balanceOf(bridgeUser)), 8)
-                printState('After', home, foreign, bitcoin, bridgeUser)
+                await printState('After', home, foreign, bitcoin, bridgeUser)
                 assert.equal(STARTING_BALANCE, parseInt(homeBalance) + parseInt(bitcoinBalance))
 
                 break
@@ -137,7 +139,6 @@ contract('ERC20Portal To Bridgeable Token Tests [testERC20ToERC20.js]', async (a
         }
 
     })
-*/
 
     async function printState(title, home, foreign, bitcoin, bridgeUser) {
         homeBalance = readable((await home.balanceOf(bridgeUser)))

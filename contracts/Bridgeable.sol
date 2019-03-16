@@ -1,8 +1,8 @@
 pragma solidity ^0.4.24;
 
 import 'openzeppelin-solidity/contracts/token/ERC20/StandardToken.sol';
+import 'openzeppelin-solidity/contracts/ownership/Ownable.sol';
 import './SignatureUtils.sol';
-import './Ownable.sol';
 
 contract Bridgeable is StandardToken, SignatureUtils, Ownable {
 	address[] public validators;

@@ -1,7 +1,7 @@
 pragma solidity ^0.4.24;
 
 import './SignatureUtils.sol';
-import './Ownable.sol';
+import 'openzeppelin-solidity/contracts/ownership/Ownable.sol';
 
 /**
  * @title Verifiable
