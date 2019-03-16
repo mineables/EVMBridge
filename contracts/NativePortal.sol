@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.0;
 
 import './BasePortal.sol';
 
@@ -16,7 +16,7 @@ contract NativePortal is BasePortal {
         emit EnterBridgeEvent(msg.sender, msg.value);
     }
     
-    function exit(bytes32 _txnHash, address _foreignContract, uint256 _amount, bytes _signatures) public {
+    function exit(bytes32 _txnHash, address _foreignContract, uint256 _amount, bytes memory _signatures) public {
     	require(containsTransaction(_txnHash) == false, 'Foreign transaction has already been processed');
         require(_foreignContract == foreignContract, "Invalid contract target.");
         bytes32 hash = toEthBytes32SignedMessageHash(entranceHash(_txnHash,_foreignContract, _amount));

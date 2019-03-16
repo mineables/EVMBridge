@@ -1,10 +1,10 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.0;
 
-import 'openzeppelin-solidity/contracts/token/ERC20/StandardToken.sol';
+import 'openzeppelin-solidity/contracts/token/ERC20/ERC20Mintable.sol';
 import './SignatureUtils.sol';
 import './Ownable.sol';
 
-contract BridgeableToken is StandardToken, SignatureUtils, Ownable {
+contract BridgeableToken is ERC20Mintable, SignatureUtils, Ownable {
 	address[] public validators;
 	address public foreignContract;
 	mapping (bytes32 => bool) foreignTransactions;
@@ -27,7 +27,7 @@ contract BridgeableToken is StandardToken, SignatureUtils, Ownable {
         burn(_amount);
     }
     
-    function exit(bytes32 _txnHash, address _foreignContract, uint256 _amount, bytes _signatures) public {
+    function exit(bytes32 _txnHash, address _foreignContract, uint256 _amount, bytes memory _signatures) public {
     	require(contains(_txnHash) == false, 'Foreign transaction has already been processed');
         bytes32 hash = toEthBytes32SignedMessageHash(entranceHash(_txnHash,_foreignContract, _amount));
         address[] memory recovered = recoverAddresses(hash, _signatures);
@@ -42,7 +42,7 @@ contract BridgeableToken is StandardToken, SignatureUtils, Ownable {
         return foreignTransactions[_txnHash];
     }
 
-    function verifyValidators(address[] recovered) internal view returns (bool) {
+    function verifyValidators(address[] memory recovered) internal view returns (bool) {
         require(recovered.length == validators.length, "Invalid number of signatures");
         for(uint i = 0 ; i < validators.length; i++) {
             if(validators[i] != recovered[i]) {
@@ -52,33 +52,22 @@ contract BridgeableToken is StandardToken, SignatureUtils, Ownable {
         return true;
     }
 
-    function mint( address _to, uint256 _amount )
-	    internal returns (bool) {
-	    totalSupply_ = totalSupply_.add(_amount);
-	    balances[_to] = balances[_to].add(_amount);
-	    emit Mint(_to, _amount);
-	    emit Transfer(address(0), _to, _amount);
-	    return true;
-	}
+    /**
+     * @dev Burns a specific amount of tokens.
+     * @param value The amount of token to be burned.
+     */
+    function burn(uint256 value) public {
+        _burn(msg.sender, value);
+    }
 
-	/**
-	* @dev Burns a specific amount of tokens.
-	* @param _value The amount of token to be burned.
-	*/
-	function burn(uint256 _value) internal {
-		_burn(msg.sender, _value);
-	}
-
-	function _burn(address _who, uint256 _value) internal {
-		require(_value <= balances[_who]);
-		// no need to require value <= totalSupply, since that would imply the
-		// sender's balance is greater than the totalSupply, which *should* be an assertion failure
-
-		balances[_who] = balances[_who].sub(_value);
-		totalSupply_ = totalSupply_.sub(_value);
-		emit Burn(_who, _value);
-		emit Transfer(_who, address(0), _value);
-	}
+    /**
+     * @dev Burns a specific amount of tokens from the target address and decrements allowance
+     * @param from address The account whose tokens will be burned.
+     * @param value uint256 The amount of token to be burned.
+     */
+    function burnFrom(address from, uint256 value) public {
+        _burnFrom(from, value);
+    }
 	    
     /**
      * @notice Hash (keccak256) of the payload used by deposit

@@ -1,10 +1,10 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.0;
 
 import './BasePortal.sol';
 import './ERC20Interface.sol';
 
 contract ApproveAndCallFallBack {
-    function receiveApproval(address from, uint256 tokens, address token, bytes data) public;
+    function receiveApproval(address from, uint256 tokens, address token, bytes memory data) public;
 }
 
 contract ERC20Portal is BasePortal {
@@ -12,7 +12,7 @@ contract ERC20Portal is BasePortal {
     address public tokenAddress;
 
     // don't accept any Ether
-    function () public payable {
+    function () external payable {
         revert();
     }
 
@@ -21,7 +21,7 @@ contract ERC20Portal is BasePortal {
     }
 
     // single step option for tokens that have implemented approveAndCall
-    function receiveApproval(address from, uint256 tokens, address token, bytes /* data */) public {
+    function receiveApproval(address from, uint256 tokens, address token, bytes memory/* data */) public {
         require(tokens > 0, "Value must be greater than 0");
         require(tokenAddress == token, "Target Token Address is invalid.");
         require(ERC20Interface(tokenAddress).transferFrom(from, address(this), tokens), "Could not transfer tokens");
@@ -33,7 +33,7 @@ contract ERC20Portal is BasePortal {
         receiveApproval(msg.sender, _amount, tokenAddress, '');
     }
     
-    function exit(bytes32 _txnHash, address _foreignContract, uint256 _amount, bytes _signatures) public {
+    function exit(bytes32 _txnHash, address _foreignContract, uint256 _amount, bytes memory _signatures) public {
     	require(containsTransaction(_txnHash) == false, 'Foreign transaction has already been processed');
         require(_foreignContract == foreignContract, "Invalid contract target.");
         bytes32 hash = toEthBytes32SignedMessageHash(entranceHash(_txnHash,_foreignContract, _amount));

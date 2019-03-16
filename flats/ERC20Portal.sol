@@ -284,6 +284,10 @@ contract ERC20Interface {
 
     event Transfer(address indexed from, address indexed to, uint tokens);
     event Approval(address indexed tokenOwner, address indexed spender, uint tokens);
+
+    function name() public constant returns (string);
+    function symbol() public constant returns (string);
+    function decimals() public constant returns (uint8);
 }
 
 // File: contracts/ERC20Portal.sol

@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity >0.4.99 <0.6.0;
 
 
 // ----------------------------------------------------------------------------
@@ -91,11 +91,11 @@ library ExtendedMath {
 
 contract ERC20Interface {
 
-    function totalSupply() public constant returns (uint);
+    function totalSupply() public view returns (uint);
 
-    function balanceOf(address tokenOwner) public constant returns (uint balance);
+    function balanceOf(address tokenOwner) public view returns (uint balance);
 
-    function allowance(address tokenOwner, address spender) public constant returns (uint remaining);
+    function allowance(address tokenOwner, address spender) public view returns (uint remaining);
 
     function transfer(address to, uint tokens) public returns (bool success);
 
@@ -124,7 +124,7 @@ contract ERC20Interface {
 
 contract ApproveAndCallFallBack {
 
-    function receiveApproval(address from, uint256 tokens, address token, bytes data) public;
+    function receiveApproval(address from, uint256 tokens, address token, bytes memory data) public;
 
 }
 
@@ -146,7 +146,7 @@ contract Owned {
     event OwnershipTransferred(address indexed _from, address indexed _to);
 
 
-    function Owned() public {
+    constructor() public {
 
         owner = msg.sender;
 
@@ -172,7 +172,7 @@ contract Owned {
 
         require(msg.sender == newOwner);
 
-        OwnershipTransferred(owner, newOwner);
+        emit OwnershipTransferred(owner, newOwner);
 
         owner = newOwner;
 
@@ -261,7 +261,7 @@ contract _0xBitcoinToken is ERC20Interface, Owned {
 
     // ------------------------------------------------------------------------
 
-    function _0xBitcoinToken() public onlyOwner{
+    constructor() public onlyOwner{
 
 
 
@@ -290,7 +290,7 @@ contract _0xBitcoinToken is ERC20Interface, Owned {
 
         //The owner gets nothing! You must mine this ERC20 token
         balances[owner] = _totalSupply;
-        Transfer(address(0), owner, _totalSupply);
+        emit Transfer(address(0), owner, _totalSupply);
 
     }
 
@@ -301,7 +301,7 @@ contract _0xBitcoinToken is ERC20Interface, Owned {
 
 
             //the PoW must contain work that includes a recent ethereum block hash (challenge number) and the msg.sender's address to prevent MITM attacks
-            bytes32 digest =  keccak256(challengeNumber, msg.sender, nonce );
+            bytes32 digest =  keccak256( abi.encode(challengeNumber, msg.sender, nonce) );
 
             //the challenge digest must match the expected
             if (digest != challenge_digest) revert();
@@ -334,7 +334,7 @@ contract _0xBitcoinToken is ERC20Interface, Owned {
 
              _startNewMiningEpoch();
 
-              Mint(msg.sender, reward_amount, epochCount, challengeNumber );
+              emit Mint(msg.sender, reward_amount, epochCount, challengeNumber );
 
            return true;
 
@@ -368,7 +368,7 @@ contract _0xBitcoinToken is ERC20Interface, Owned {
 
       //make the latest ethereum block hash a part of the next challenge for PoW to prevent pre-mining future blocks
       //do this last since this is a protection mechanism in the mint() function
-      challengeNumber = block.blockhash(block.number - 1);
+      challengeNumber = blockhash(block.number - 1);
 
 
 
@@ -431,16 +431,16 @@ contract _0xBitcoinToken is ERC20Interface, Owned {
 
 
     //this is a recent ethereum block hash, used to prevent pre-mining future blocks
-    function getChallengeNumber() public constant returns (bytes32) {
+    function getChallengeNumber() public view returns (bytes32) {
         return challengeNumber;
     }
 
     //the number of zeroes the digest of the PoW solution requires.  Auto adjusts
-     function getMiningDifficulty() public constant returns (uint) {
+     function getMiningDifficulty() public view returns (uint) {
         return _MAXIMUM_TARGET.div(miningTarget);
     }
 
-    function getMiningTarget() public constant returns (uint) {
+    function getMiningTarget() public view returns (uint) {
        return miningTarget;
    }
 
@@ -448,7 +448,7 @@ contract _0xBitcoinToken is ERC20Interface, Owned {
 
     //21m coins total
     //reward begins at 50 and is cut in half every reward era (as tokens are mined)
-    function getMiningReward() public constant returns (uint) {
+    function getMiningReward() public view returns (uint) {
         //once we get half way thru the coins, only get 25 per block
 
          //every reward era, the reward amount halves.
@@ -457,27 +457,6 @@ contract _0xBitcoinToken is ERC20Interface, Owned {
 
     }
 
-    //help debug mining software
-    function getMintDigest(uint256 nonce, bytes32 challenge_digest, bytes32 challenge_number) public view returns (bytes32 digesttest) {
-
-        bytes32 digest = keccak256(challenge_number,msg.sender,nonce);
-
-        return digest;
-
-      }
-
-        //help debug mining software
-      function checkMintSolution(uint256 nonce, bytes32 challenge_digest, bytes32 challenge_number, uint testTarget) public view returns (bool success) {
-
-          bytes32 digest = keccak256(challenge_number,msg.sender,nonce);
-
-          if(uint256(digest) > testTarget) revert();
-
-          return (digest == challenge_digest);
-
-        }
-
-
 
     // ------------------------------------------------------------------------
 
@@ -485,7 +464,7 @@ contract _0xBitcoinToken is ERC20Interface, Owned {
 
     // ------------------------------------------------------------------------
 
-    function totalSupply() public constant returns (uint) {
+    function totalSupply() public view returns (uint) {
 
         return _totalSupply  - balances[address(0)];
 
@@ -499,7 +478,7 @@ contract _0xBitcoinToken is ERC20Interface, Owned {
 
     // ------------------------------------------------------------------------
 
-    function balanceOf(address tokenOwner) public constant returns (uint balance) {
+    function balanceOf(address tokenOwner) public view returns (uint balance) {
 
         return balances[tokenOwner];
 
@@ -523,7 +502,7 @@ contract _0xBitcoinToken is ERC20Interface, Owned {
 
         balances[to] = balances[to].add(tokens);
 
-        Transfer(msg.sender, to, tokens);
+        emit Transfer(msg.sender, to, tokens);
 
         return true;
 
@@ -551,7 +530,7 @@ contract _0xBitcoinToken is ERC20Interface, Owned {
 
         allowed[msg.sender][spender] = tokens;
 
-        Approval(msg.sender, spender, tokens);
+        emit Approval(msg.sender, spender, tokens);
 
         return true;
 
@@ -585,7 +564,7 @@ contract _0xBitcoinToken is ERC20Interface, Owned {
 
         balances[to] = balances[to].add(tokens);
 
-        Transfer(from, to, tokens);
+        emit Transfer(from, to, tokens);
 
         return true;
 
@@ -601,7 +580,7 @@ contract _0xBitcoinToken is ERC20Interface, Owned {
 
     // ------------------------------------------------------------------------
 
-    function allowance(address tokenOwner, address spender) public constant returns (uint remaining) {
+    function allowance(address tokenOwner, address spender) public view returns (uint remaining) {
 
         return allowed[tokenOwner][spender];
 
@@ -619,13 +598,13 @@ contract _0xBitcoinToken is ERC20Interface, Owned {
 
     // ------------------------------------------------------------------------
 
-    function approveAndCall(address spender, uint tokens, bytes data) public returns (bool success) {
+    function approveAndCall(address spender, uint tokens, bytes memory data) public returns (bool success) {
 
         allowed[msg.sender][spender] = tokens;
 
-        Approval(msg.sender, spender, tokens);
+        emit Approval(msg.sender, spender, tokens);
 
-        ApproveAndCallFallBack(spender).receiveApproval(msg.sender, tokens, this, data);
+        ApproveAndCallFallBack(spender).receiveApproval(msg.sender, tokens, address(this), data);
 
         return true;
 
@@ -639,7 +618,7 @@ contract _0xBitcoinToken is ERC20Interface, Owned {
 
     // ------------------------------------------------------------------------
 
-    function () public payable {
+    function () external payable {
 
         revert();
 

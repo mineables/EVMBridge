@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.0;
 
 import './SignatureUtils.sol';
 import 'openzeppelin-solidity/contracts/ownership/Ownable.sol';
@@ -21,7 +21,7 @@ contract BasePortal is SignatureUtils, Ownable {
         foreignContract = _foreignContract;
     }
 
-    function verifyValidators(address[] recovered) internal view returns (bool) {
+    function verifyValidators(address[] memory recovered) internal view returns (bool) {
         require(recovered.length == validators.length, "Invalid number of signatures");
         for(uint i = 0 ; i < validators.length; i++) {
             if(validators[i] != recovered[i]) {

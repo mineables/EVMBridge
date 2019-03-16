@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.0;
 
 /// @title A library of utilities for (multi)signatures
 /// @author Alexander Kern <alex@cleargraph.com>
@@ -20,7 +20,7 @@ contract SignatureUtils {
     /// @notice Converts a byte array to a personal signed message hash (result of `web3.personal.sign(...)`) by concatenating its length.
     /// @param _msg The bytes array to encrypt
     function toEthPersonalSignedMessageHash(
-        bytes _msg
+        bytes memory _msg
     )
         pure
         public
@@ -36,7 +36,7 @@ contract SignatureUtils {
     )
         pure
         public
-        returns (string)
+        returns (string memory)
     {
         uint w = v;
         bytes32 x;
@@ -60,7 +60,7 @@ contract SignatureUtils {
             }
         }
         bytes memory resultBytes = new bytes(charCount);
-        for (j = 0; j < charCount; j++) {
+        for (uint j = 0; j < charCount; j++) {
             resultBytes[j] = bytesString[j];
         }
 
@@ -72,7 +72,7 @@ contract SignatureUtils {
     /// @param _signatures The signatures bytes array
     /// @param _pos The position of the signature in the bytes array (0 indexed)
     function parseSignature(
-        bytes _signatures,
+        bytes memory _signatures,
         uint _pos
     )
         pure
@@ -103,7 +103,7 @@ contract SignatureUtils {
     /// @param _signatures The signatures bytes array
     /// @dev Signatures are 65 bytes long and are densely packed.
     function countSignatures(
-        bytes _signatures
+        bytes memory _signatures
     )
         pure
         public
@@ -118,7 +118,7 @@ contract SignatureUtils {
     /// @param _pos The signature's position in the bytes array (0 indexed)
     function recoverAddress(
         bytes32 _hash,
-        bytes _signatures,
+        bytes memory _signatures,
         uint _pos
     )
         pure
@@ -137,11 +137,11 @@ contract SignatureUtils {
     /// @param _signatures The signatures bytes array
     function recoverAddresses(
         bytes32 _hash,
-        bytes _signatures
+        bytes memory _signatures
     )
         pure
         public
-        returns (address[] addresses)
+        returns (address[] memory addresses)
     {
         uint8 v;
         bytes32 r;

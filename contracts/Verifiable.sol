@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.0;
 
 import './SignatureUtils.sol';
 import './Ownable.sol';
@@ -11,7 +11,7 @@ import './Ownable.sol';
 contract Verifiable is Ownable, SignatureUtils {
 	address[] public validators;
 
-	modifier isVerified(bytes _signatures) {
+	modifier isVerified(bytes memory _signatures) {
 		bytes32 _hash = keccak256(msg.data);
 	    address[] memory recovered = recoverAddresses(_hash, _signatures);
         require(verifyValidators(recovered), "Validator verification failed.");
@@ -22,7 +22,7 @@ contract Verifiable is Ownable, SignatureUtils {
         validators.push(_validator);
     }
 
-	function verifyValidators(address[] _recovered) internal view returns (bool) {
+	function verifyValidators(address[] memory _recovered) internal view returns (bool) {
 		require(_recovered.length == validators.length, "Invalid number of signatures");
 		for(uint i = 0 ; i < validators.length; i++) {
 		    if(validators[i] != _recovered[i]) {
