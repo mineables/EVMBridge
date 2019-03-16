@@ -32,7 +32,6 @@ Rinkeby 0xBitcoin Peg
 2. Create an env file that contains all of your configuration. Below is an example configuration for the test environment described above.
 ```
 # Token Portal Properties
-# Token Portal Properties
 PORT=4000
 
 # Ethereum Properties
@@ -53,6 +52,9 @@ TOKEN_CONTRACT=0x576b32b5f58c3B80385f13A8479b33F881F9906d
 3. Start up the service with `npm index.js`
 
 # Performing swap from 'Mainnet' to 'Chainnet'
+
+* Note: Since the state of these transactions is stored 100% between the chains, you can call http://127.0.0.1:4000/transactions/0xYOUR-ADDRESS anytime to get a complete view of the bridge's transactions.
+
 1. Transfer 0xBitcoin to the Token Portal: bitcoin.approveAndCall(TokenPortal.address, tokens, 0x0, {from: bridgeUser})
 2. Capture the transaction hash from step one and use it to build a curl command to the bridge:
     ```
