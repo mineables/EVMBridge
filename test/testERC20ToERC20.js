@@ -1,11 +1,9 @@
 const Web3 = require('web3')
 const web3 = new Web3()
 var ERC20Portal = artifacts.require("./ERC20Portal.sol")
-var NativePortal = artifacts.require("./ERC20Portal.sol")
 var Bitcoin = artifacts.require("./_0xBitcoinToken.sol")
 
 var HomeToken = artifacts.require("./HomeToken.sol")
-var ForeignToken = artifacts.require("./ForeignToken.sol")
 
 contract('ERC20Portal To Bridgeable Token Tests [testERC20ToERC20.js]', async (accounts) => {
 
@@ -41,15 +39,15 @@ contract('ERC20Portal To Bridgeable Token Tests [testERC20ToERC20.js]', async (a
         console.log('bridged tokens configured')
     })
 
-    it("should test transfer of 300 from foreign to home", async () => {
+    it("should test transfer of 300 from mainnet to chainnet", async () => {
         let home = await HomeToken.deployed()
         let foreign = await ERC20Portal.deployed()
         let bitcoin = await Bitcoin.deployed()
 
+        
+        printState('Before', home, foreign, bitcoin, bridgeUser)
         let homeBalance = readable((await home.balanceOf(bridgeUser)))
         let bitcoinBalance = readable((await bitcoin.balanceOf(bridgeUser)), 8)
-        console.log('Before - home.balanceOf: ', parseInt(homeBalance))
-        console.log('Before - bitcoin.balanceOf: ', bitcoinBalance)
         assert.equal(STARTING_BALANCE, parseInt(homeBalance) + parseInt(bitcoinBalance))
 
         // important to remember that 0xBitcoin only has 8 decimals
@@ -58,11 +56,14 @@ contract('ERC20Portal To Bridgeable Token Tests [testERC20ToERC20.js]', async (a
         let tokensInNative = tokens * Math.pow(10, 18)
         // Step 1: User calls enter on foreign
 
+        // two calls to approve and transfer
         await bitcoin.approve(foreign.address, tokensIn0xBTC, { from: bridgeUser })
         let enterTxn = await foreign.enter(tokensIn0xBTC, { from: bridgeUser })
 
-        // single call here
+        // single call here - doesnt play well with truffle
         // let enterTxn = await bitcoin.approveAndCall(foreign.address, tokensIn0xBTC, web3.utils.toHex(0), {from: bridgeUser})
+
+        printState('Middle', home, foreign, bitcoin, bridgeUser)
 
         // We can loop through result.logs to see if we triggered the event.
         for (var i = 0; i < enterTxn.logs.length; i++) {
@@ -83,8 +84,7 @@ contract('ERC20Portal To Bridgeable Token Tests [testERC20ToERC20.js]', async (a
 
                 let homeBalance = readable((await home.balanceOf(bridgeUser)))
                 let bitcoinBalance = readable((await bitcoin.balanceOf(bridgeUser)), 8)
-                console.log('After - home.balanceOf: ', parseInt(homeBalance))
-                console.log('After - bitcoin.balanceOf: ', bitcoinBalance)
+                printState('After', home, foreign, bitcoin, bridgeUser)
                 assert.equal(STARTING_BALANCE, parseInt(homeBalance) + parseInt(bitcoinBalance))
 
                 break
@@ -92,8 +92,8 @@ contract('ERC20Portal To Bridgeable Token Tests [testERC20ToERC20.js]', async (a
         }
 
     })
-
-    it("should test transfer of 200 from home to foreign", async () => {
+/*
+    it("should test transfer of 200 from chainnet to mainnet", async () => {
         let home = await HomeToken.deployed()
         let foreign = await ERC20Portal.deployed()
         let bitcoin = await Bitcoin.deployed()
@@ -103,10 +103,9 @@ contract('ERC20Portal To Bridgeable Token Tests [testERC20ToERC20.js]', async (a
         let tokensIn0xBTC = tokens * Math.pow(10, 8)
         let tokensInNative = tokens * Math.pow(10, 18)
 
+        printState('Before', home, foreign, bitcoin, bridgeUser)
         let homeBalance = readable((await home.balanceOf(bridgeUser)))
         let bitcoinBalance = readable((await bitcoin.balanceOf(bridgeUser)), 8)
-        console.log('Before - home.balanceOf: ', parseInt(homeBalance))
-        console.log('Before - bitcoin.balanceOf: ', bitcoinBalance)
         assert.equal(STARTING_BALANCE, parseInt(homeBalance) + parseInt(bitcoinBalance))
 
         // Step 1: User calls enter on foreign
@@ -130,8 +129,7 @@ contract('ERC20Portal To Bridgeable Token Tests [testERC20ToERC20.js]', async (a
 
                 let homeBalance = readable((await home.balanceOf(bridgeUser)))
                 let bitcoinBalance = readable((await bitcoin.balanceOf(bridgeUser)), 8)
-                console.log('After - home.balanceOf: ', parseInt(homeBalance))
-                console.log('After - bitcoin.balanceOf: ', bitcoinBalance)
+                printState('After', home, foreign, bitcoin, bridgeUser)
                 assert.equal(STARTING_BALANCE, parseInt(homeBalance) + parseInt(bitcoinBalance))
 
                 break
@@ -139,7 +137,16 @@ contract('ERC20Portal To Bridgeable Token Tests [testERC20ToERC20.js]', async (a
         }
 
     })
+*/
 
+    async function printState(title, home, foreign, bitcoin, bridgeUser) {
+        homeBalance = readable((await home.balanceOf(bridgeUser)))
+        bitcoinBalance = readable((await bitcoin.balanceOf(bridgeUser)), 8)
+        foreignBalance = readable((await bitcoin.balanceOf(foreign.address)), 8) 
+        console.log(title + ' - home.balanceOf: ', parseInt(homeBalance))
+        console.log(title + ' - bitcoin.balanceOf(user): ', bitcoinBalance)
+        console.log(title + ' - bitcoin.balanceOf(portal): ', foreignBalance)
+    }
 
     function readable(num, decimals = 18) {
         return num / Math.pow(10, decimals);

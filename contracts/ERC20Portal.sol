@@ -21,16 +21,16 @@ contract ERC20Portal is BasePortal {
     }
 
     // single step option for tokens that have implemented approveAndCall
-    function receiveApproval(address from, uint256 tokens, address token, bytes /* data */) public {
+    function receiveApproval(address from, uint256 tokens, address token, bytes data) public {
         require(tokens > 0, "Value must be greater than 0");
         require(tokenAddress == token, "Target Token Address is invalid.");
-        require(ERC20Interface(tokenAddress).transferFrom(from, address(this), tokens), "Could not transfer tokens");
+        require(ERC20Interface(token).transferFrom(from, address(this), tokens), "Could not transfer tokens");
         emit EnterBridgeEvent(from, tokens);
     }
     
     // two step operation that requires a previous call to approve
     function enter(uint _amount) public {
-        receiveApproval(msg.sender, _amount, tokenAddress, '');
+        receiveApproval(msg.sender, _amount, tokenAddress, "");
     }
     
     function exit(bytes32 _txnHash, address _foreignContract, uint256 _amount, bytes _signatures) public {

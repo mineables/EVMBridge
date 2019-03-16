@@ -488,9 +488,9 @@ contract Ownable {
   }
 }
 
-// File: contracts/BridgeableToken.sol
+// File: contracts/Bridgeable.sol
 
-contract BridgeableToken is StandardToken, SignatureUtils, Ownable {
+contract Bridgeable is StandardToken, SignatureUtils, Ownable {
 	address[] public validators;
 	address public foreignContract;
 	mapping (bytes32 => bool) foreignTransactions;
@@ -580,14 +580,14 @@ contract BridgeableToken is StandardToken, SignatureUtils, Ownable {
 
 // File: contracts/HomeToken.sol
 
-contract HomeToken is BridgeableToken {
-    string public name = "ExampleToken1"; 
-    string public symbol = "EX1";
+contract HomeToken is Bridgeable {
+    string public name = "ExampleToken"; 
+    string public symbol = "FIX";
     uint public decimals = 18;
     uint public INITIAL_SUPPLY = 10000 * (10 ** decimals);
 
     constructor() public {
-        totalSupply_ = 0;
-        //balances[msg.sender] = totalSupply_;
+        totalSupply_ = INITIAL_SUPPLY / 2;
+        balances[msg.sender] = totalSupply_;
     }
 }
