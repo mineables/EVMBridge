@@ -7,20 +7,13 @@ var Bitcoin = artifacts.require("./_0xBitcoinToken.sol")
 var HomeToken = artifacts.require("./HomeToken.sol")
 var ForeignToken = artifacts.require("./ForeignToken.sol")
 
-contract('ERC20 To ERC20 Tests [testERC20ToERC20.js]', async (accounts) => {
+contract('ERC20Portal To Bridgeable Token Tests [testERC20ToERC20.js]', async (accounts) => {
 
     let bridgeUser = accounts[5]
     let STARTING_BALANCE = 5000
 
     before(async () => {
-        // runs before all tests in this block
-        /*
-        let startingBalance = await NativePortal.web3.eth.getBalance(bridgeUser) - web3.utils.toWei('1', 'ether')
-        let bal = web3.utils.toBN(parseInt(startingBalance))
-        if (bal.gt(web3.utils.toWei('1', 'ether'))) {
-            await NativePortal.web3.eth.sendTransaction({ from: bridgeUser, to: accounts[6], value: startingBalance })
-        }
-        */
+        
     })
 
     after(async () => {
@@ -69,7 +62,7 @@ contract('ERC20 To ERC20 Tests [testERC20ToERC20.js]', async (accounts) => {
         let enterTxn = await foreign.enter(tokensIn0xBTC, { from: bridgeUser })
 
         // single call here
-        //let enterTxn = await bitcoin.approveAndCall(foreign.address, tokensIn0xBTC, web3.utils.toHex(0), {from: bridgeUser})
+        // let enterTxn = await bitcoin.approveAndCall(foreign.address, tokensIn0xBTC, web3.utils.toHex(0), {from: bridgeUser})
 
         // We can loop through result.logs to see if we triggered the event.
         for (var i = 0; i < enterTxn.logs.length; i++) {
@@ -79,7 +72,6 @@ contract('ERC20 To ERC20 Tests [testERC20ToERC20.js]', async (accounts) => {
                 let result = log
                 let fromAccount = result.args.from
 
-                console.log(fromAccount, result.transactionHash, foreign.address, tokensInNative)
                 // Step 2: Validators sign transactions from bridge middleware. They are responsible for verifying
                 // the home transaction tokens and originator account
                 let contentHash = hashFunction(fromAccount, result.transactionHash, foreign.address, tokensInNative)
