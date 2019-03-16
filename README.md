@@ -65,9 +65,10 @@ TOKEN_CONTRACT=0x576b32b5f58c3B80385f13A8479b33F881F9906d
     "foreignContract": "0xFA398Cd7037B046fA7Cae20AEEe4FD00E9B35B90",
     "tokens": 20000000000000000000,
     "signatures": "0xdab06f2e4394fcd428e2e491470137c3036835939d0311339a9c3b89ff1f1a5f0539d26d4216fb0cb98fc8951086142c7a0823f80d018f2232dfb857657068e61c"
-    }```
-3. The resulting packet is a deterministic transaction that represents the value of the transfer. It can be used to store tokens completely offchain, as their value is pegged to the token bridge contract on mainnet. This packet will also only work when 'cashed in' by the same user on the side chain.
-4. Complete the transfer to the Chainnet by calling the Chain's Token Peg contract's exit() method, using the parameters from the enter() transaction in the previous step
+    }
+    ```
+    The resulting packet is a deterministic transaction that represents the value of the transfer. It can be used to store tokens completely offchain, as their value is pegged to the token bridge contract on mainnet. This packet will also only work when 'cashed in' by the same user on the side chain.
+3. Complete the transfer to the Chainnet by calling the Chain's Token Peg contract's exit() method, using the parameters from the enter() transaction in the previous step
     ```
     tokenpeg.exit(transactionHash, TokenPortal.address, tokens, signatures)
     ```
