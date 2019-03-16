@@ -53,8 +53,8 @@ contract('ERC20 To ERC20 Tests [testERC20ToERC20.js]', async (accounts) => {
         let foreign = await ERC20Portal.deployed()
         let bitcoin = await Bitcoin.deployed()
 
-        let homeBalance = readable((await home.balanceOf(bridgeUser)).toNumber())
-        let bitcoinBalance = readable((await bitcoin.balanceOf(bridgeUser)).toNumber(), 8)
+        let homeBalance = readable((await home.balanceOf(bridgeUser)))
+        let bitcoinBalance = readable((await bitcoin.balanceOf(bridgeUser)), 8)
         console.log('Before - home.balanceOf: ', parseInt(homeBalance))
         console.log('Before - bitcoin.balanceOf: ', bitcoinBalance)
         assert.equal(STARTING_BALANCE, parseInt(homeBalance) + parseInt(bitcoinBalance))
@@ -77,8 +77,9 @@ contract('ERC20 To ERC20 Tests [testERC20ToERC20.js]', async (accounts) => {
 
             if (log.event == "EnterBridgeEvent") {
                 let result = log
-                let tokens = result.args.amount.toNumber()
                 let fromAccount = result.args.from
+
+                console.log(fromAccount, result.transactionHash, foreign.address, tokensInNative)
                 // Step 2: Validators sign transactions from bridge middleware. They are responsible for verifying
                 // the home transaction tokens and originator account
                 let contentHash = hashFunction(fromAccount, result.transactionHash, foreign.address, tokensInNative)
@@ -86,10 +87,10 @@ contract('ERC20 To ERC20 Tests [testERC20ToERC20.js]', async (accounts) => {
                 // Step 2.1: Bridge middleware returns signed transactionss
 
                 // Step 3: User calls exit on foreign contract with signed transactions
-                await home.exit(result.transactionHash, foreign.address, tokensInNative, signatures, { from: bridgeUser })
+                await home.exit(result.transactionHash, foreign.address, tokensInNative.toString(), signatures, { from: bridgeUser })
 
-                let homeBalance = readable((await home.balanceOf(bridgeUser)).toNumber())
-                let bitcoinBalance = readable((await bitcoin.balanceOf(bridgeUser)).toNumber(), 8)
+                let homeBalance = readable((await home.balanceOf(bridgeUser)))
+                let bitcoinBalance = readable((await bitcoin.balanceOf(bridgeUser)), 8)
                 console.log('After - home.balanceOf: ', parseInt(homeBalance))
                 console.log('After - bitcoin.balanceOf: ', bitcoinBalance)
                 assert.equal(STARTING_BALANCE, parseInt(homeBalance) + parseInt(bitcoinBalance))
@@ -110,14 +111,14 @@ contract('ERC20 To ERC20 Tests [testERC20ToERC20.js]', async (accounts) => {
         let tokensIn0xBTC = tokens * Math.pow(10, 8)
         let tokensInNative = tokens * Math.pow(10, 18)
 
-        let homeBalance = readable((await home.balanceOf(bridgeUser)).toNumber())
-        let bitcoinBalance = readable((await bitcoin.balanceOf(bridgeUser)).toNumber(), 8)
+        let homeBalance = readable((await home.balanceOf(bridgeUser)))
+        let bitcoinBalance = readable((await bitcoin.balanceOf(bridgeUser)), 8)
         console.log('Before - home.balanceOf: ', parseInt(homeBalance))
         console.log('Before - bitcoin.balanceOf: ', bitcoinBalance)
         assert.equal(STARTING_BALANCE, parseInt(homeBalance) + parseInt(bitcoinBalance))
 
         // Step 1: User calls enter on foreign
-        let enterTxn = await home.enter(tokensInNative, { from: bridgeUser })
+        let enterTxn = await home.enter(tokensInNative.toString(), { from: bridgeUser })
 
         // We can loop through result.logs to see if we triggered the event.
         for (var i = 0; i < enterTxn.logs.length; i++) {
@@ -125,7 +126,6 @@ contract('ERC20 To ERC20 Tests [testERC20ToERC20.js]', async (accounts) => {
 
             if (log.event == "EnterBridgeEvent") {
                 let result = log
-                let tokens = result.args.amount.toNumber()
                 let fromAccount = result.args.from
                 // Step 2: Validators sign transactions from bridge middleware. They are responsible for verifying
                 // the home transaction tokens and originator account
@@ -134,10 +134,10 @@ contract('ERC20 To ERC20 Tests [testERC20ToERC20.js]', async (accounts) => {
                 // Step 2.1: Bridge middleware returns signed transactionss
 
                 // Step 3: User calls exit on foreign contract with signed transactions
-                await foreign.exit(result.transactionHash, home.address, tokensIn0xBTC, signatures, { from: bridgeUser })
+                await foreign.exit(result.transactionHash, home.address, tokensIn0xBTC.toString(), signatures, { from: bridgeUser })
 
-                let homeBalance = readable((await home.balanceOf(bridgeUser)).toNumber())
-                let bitcoinBalance = readable((await bitcoin.balanceOf(bridgeUser)).toNumber(), 8)
+                let homeBalance = readable((await home.balanceOf(bridgeUser)))
+                let bitcoinBalance = readable((await bitcoin.balanceOf(bridgeUser)), 8)
                 console.log('After - home.balanceOf: ', parseInt(homeBalance))
                 console.log('After - bitcoin.balanceOf: ', bitcoinBalance)
                 assert.equal(STARTING_BALANCE, parseInt(homeBalance) + parseInt(bitcoinBalance))
