@@ -9,6 +9,7 @@ Currently, the middleware is in a beta state, however the signing logic and flow
 Conceptually there are really 2 *Portal* smart contracts of concern:
     * NativePortal - a gateway to an EVM's native token (ie. Ether)
     * ERC20Portal - a gateway to an ERC20 compliant Token.
+```    
           +-------------+       +----------------+       +--------------+
           |             +------>+                +------>+              |
           | ERC20Portal |       | Bridge Network |       | NativePortal |
@@ -16,6 +17,7 @@ Conceptually there are really 2 *Portal* smart contracts of concern:
 +-------+ +-------------+       +----------------+       +--------------+ +--------+
 | 0xBTC |  EVM1 (Mainnet)                               EVM2 (0xBitchain) | "Ether"|
 +-------+                                                                 +--------+
+```
 
 The System uses these *Portal* contracts, responsible for registering/deregistering validators, and confirming signed transfer requests from users. Validators listen for portal requests from Portal contract entry events and confirm/drop transactions accordingly.
 
@@ -31,7 +33,7 @@ An example scenario might be user Alice wishes to transfer 100 0xBitcoin over to
 6. In reverse, when the user wants to send the funds back to mainnet, she simply calls the NativePortal first, waits for validation from the bridge network and then calls the ERCPortal which will release the tokens from the contract.
 
 ## ERC20 -> ERC20
-
+```
           +-------------+       +----------------+       +--------------+
           |             +------>+                +------>+              |
           | ERC20Portal |       | Bridge Network |       |  ERC20Portal |
@@ -39,6 +41,7 @@ An example scenario might be user Alice wishes to transfer 100 0xBitcoin over to
 +-------+ +-------------+       +----------------+       +--------------++-----------+
 | 0xBTC |                                                                | 0xBTC.PEG |
 +-------+                                                                +-----------+
+```
 
 Transferring value from ERC20 on mainnet to ERC20 on chainnet follows a similar set of steps, except on the chainnet side, ERC20 "Peg" tokens are minted/burned as they enter and exit the EVM.
 
