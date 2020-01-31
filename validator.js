@@ -165,6 +165,5 @@ const getValidatorSignature = (payload) => {
     node1.pubsub.publish(responsesTopic, Buffer.from( JSON.stringify(tx)) )
     
   })
-
   
 })();

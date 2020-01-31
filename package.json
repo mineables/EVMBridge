@@ -7,7 +7,6 @@
     "test": "test"
   },
   "dependencies": {
-    "dotenv": "^6.2.0",
     "libp2p": "^0.27.0",
     "libp2p-gossipsub": "^0.2.2",
     "libp2p-mplex": "^0.9.3",
@@ -16,6 +15,7 @@
     "openzeppelin-solidity": "^1.12.0",
     "peer-info": "^0.17.1",
     "truffle-hdwallet-provider": "0.0.6",
+    "dotenv": "^6.2.0",
     "web3": "^1.0.0-beta.36"
   },
   "devDependencies": {},

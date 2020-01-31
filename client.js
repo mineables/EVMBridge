@@ -54,7 +54,7 @@ const createNode = async () => {
   const requestsTopic = 'request'
   const responsesTopic = 'response'
 
-  const node1 = createNode()
+  const node1 = await createNode()
   //await node1.dial(node2.peerInfo)
 
   await node1.pubsub.subscribe(responsesTopic, async(msg) => {
