@@ -1,8 +1,46 @@
-# BridgeableToken
+# EVM Bridge
 
-The BridgeableToken is a super contract that defines behavior for moving ERC20 tokens from one chain to another.
+The EVM Bridge contains EVM *Portal* smart contracts and decentralized middleware for safely transporting Ether and ERC20 tokens to/from EVMs.
 
-Currently, there is no implemented middleware, however the signing logic and flow is defined in tests/testBridgeable.js
+Currently, the middleware is in a beta state, however the signing logic and flow is well defined in tests/testBridgeable.js
+
+# Design
+
+Conceptually there are really 2 *Portal* smart contracts of concern:
+    * NativePortal - a gateway to an EVM's native token (ie. Ether)
+    * ERC20Portal - a gateway to an ERC20 compliant Token.
+          +-------------+       +----------------+       +--------------+
+          |             +------>+                +------>+              |
+          | ERC20Portal |       | Bridge Network |       | NativePortal |
+          |             +<------+                +<------+              |
++-------+ +-------------+       +----------------+       +--------------+ +--------+
+| 0xBTC |  EVM1 (Mainnet)                               EVM2 (0xBitchain) | "Ether"|
++-------+                                                                 +--------+
+
+The System uses these *Portal* contracts, responsible for registering/deregistering validators, and confirming signed transfer requests from users. Validators listen for portal requests from Portal contract entry events and confirm/drop transactions accordingly.
+
+## ERC20 -> Native EVM
+An example scenario might be user Alice wishes to transfer 100 0xBitcoin over to the xDAI network in order to pay for services within that environment. The EVM Bridge stack would follow these steps (see test/testERC20ToNative.js):
+
+0. Setup: Validators register their address with each Portal contract and initial deployer pairs the addresses of the token contract addresses. This operation can only be performed once during setup to ensure decentralization.
+1. The bridge user calls ERC20.approveAndCall() to the ERC20Portal with the 100 0xBitcoin Tokens requested.
+2. The approveAndCall() locks the 100 0xBTC into the contract and causes the ERCPortal to emit an *EnterBridgeEvent* containing the amount of tokens to transfer across the bridge.
+3. The Bridge Network approves and signs the transaction. Once all members have signed the transaction, it is returned to the bridge user.
+4. The bridge user submits the verified transaction to the Native Portal contract on the destination EVM.
+5. The NativePortal contract sends 100 "Ether" ( not actually Ether, but the native token on the destination EVM ), which is a 1:1 tether to the 0xBitcoin Token on mainnet.
+6. In reverse, when the user wants to send the funds back to mainnet, she simply calls the NativePortal first, waits for validation from the bridge network and then calls the ERCPortal which will release the tokens from the contract.
+
+## ERC20 -> ERC20
+
+          +-------------+       +----------------+       +--------------+
+          |             +------>+                +------>+              |
+          | ERC20Portal |       | Bridge Network |       |  ERC20Portal |
+          |             +<------+                +<------+              |
++-------+ +-------------+       +----------------+       +--------------++-----------+
+| 0xBTC |                                                                | 0xBTC.PEG |
++-------+                                                                +-----------+
+
+Transferring value from ERC20 on mainnet to ERC20 on chainnet follows a similar set of steps, except on the chainnet side, ERC20 "Peg" tokens are minted/burned as they enter and exit the EVM.
 
 # Initial EVM setup
 
@@ -15,7 +53,7 @@ Currently, there is no implemented middleware, however the signing logic and flo
 
 # Test Environment
 
-Ropsten is our test Mainnet and Rinkeby is our test chainnet.
+As an example, Ropsten is our test Mainnet and Rinkeby is our test chainnet.
 
 Ropsten 0xBitcoin
 0x576b32b5f58c3B80385f13A8479b33F881F9906d
