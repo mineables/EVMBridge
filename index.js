@@ -5,7 +5,6 @@ const foreignWeb3 = new Web3()
 const erc20PortalJson = require('./build/contracts/ERC20Portal.json')
 const bridgeableTokenJson = require('./build/contracts/Bridgeable.json')
 const erc20Json = require('./build/contracts/ERC20Interface.json')
-
 require('dotenv').config()
 
 var app = express()
