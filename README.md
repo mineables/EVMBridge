@@ -24,11 +24,13 @@ The System uses these *Portal* contracts, responsible for registering/deregister
 ## ERC20 -> Native EVM
 An example scenario might be user Alice wishes to transfer 100 0xBitcoin over to the xDAI network in order to pay for services within that environment. The EVM Bridge stack would follow these steps (see test/testERC20ToNative.js):
 
-0. Setup: Validators register their address with each Portal contract and initial deployer pairs the addresses of the token contract addresses. This operation can only be performed once during setup to ensure decentralization.
+*Setup step 1: Validators register their address with each Portal contract and initial deployer pairs the addresses of the token contract addresses. This operation can only be performed once during setup to ensure decentralization.
+Setup step 2: Side chain native EVM must have enough "Ether" sent to the NativePortal contract address to cover incoming transactions.*
+
 1. The bridge user calls ERC20.approveAndCall() to the ERC20Portal with the 100 0xBitcoin Tokens requested.
-2. The approveAndCall() locks the 100 0xBTC into the contract and causes the ERCPortal to emit an *EnterBridgeEvent* containing the amount of tokens to transfer across the bridge.
-3. The Bridge Network approves and signs the transaction. Once all members have signed the transaction, it is returned to the bridge user.
-4. The bridge user submits the verified transaction to the Native Portal contract on the destination EVM.
+2. A regular user calls approveAndCall(), locking 100 0xBTC into the contract and causing the ERCPortal to emit an *EnterBridgeEvent* containing the amount of tokens to transfer across the bridge.
+3. The Bridge Network approves and signs the transaction. Once all members have signed the transaction, it is returned to the bridge user. This is performed through a REST call, described below.
+4. The bridge user submits the verified transaction to the Native Portal contract on the destination EVM; the *exit()* function.
 5. The NativePortal contract sends 100 "Ether" ( not actually Ether, but the native token on the destination EVM ), which is a 1:1 tether to the 0xBitcoin Token on mainnet.
 6. In reverse, when the user wants to send the funds back to mainnet, she simply calls the NativePortal first, waits for validation from the bridge network and then calls the ERCPortal which will release the tokens from the contract.
 
