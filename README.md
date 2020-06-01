@@ -1,6 +1,6 @@
 # EVM Bridge
 
-The EVM Bridge contains EVM *Portal* smart contracts and decentralized middleware for safely transporting Ether and ERC20 tokens to/from EVMs.
+The EVM Bridge contains EVM *Portal* smart contracts and centralized middleware for safely transporting Ether and ERC20 tokens to/from EVMs.
 
 Currently, the middleware is in a beta state, however the signing logic and flow is well defined in tests/testBridgeable.js
 
