@@ -71,8 +71,8 @@ Rinkeby 0xBitcoin Peg
 
 # Bridge Service setup
 
-1. Run `npm install`
-2. Create an env file that contains all of your configuration. Below is an example configuration for the test environment described above.
+## Setup .env file
+1. Create an env file that contains all of your configuration. Below is an example configuration for the test environment described above.
 ```
 # Token Portal Properties
 PORT=4000
@@ -92,7 +92,17 @@ FOREIGN_PORTAL_CONTRACT=0xFA398Cd7037B046fA7Cae20AEEe4FD00E9B35B90
 # ERC20 - mainnet ERC20
 TOKEN_CONTRACT=0x576b32b5f58c3B80385f13A8479b33F881F9906d
 ```
-3. Start up the service with `npm index.js`
+
+## Docker
+
+1. Ensure Docker (https://www.docker.com/) is installed on your host system.
+2. Run the included script `start-docker.sh`, the service will be running on the port specified in your .env setup.
+
+## Native
+
+1. Ensure you are using the latest version of nodejs.
+2. Run `npm install`
+3. Start up the service with `npm index.js`, the service will be running on the port specified in your .env setup.
 
 # Performing swap from 'Mainnet' to 'Chainnet'
 
