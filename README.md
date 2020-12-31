@@ -79,7 +79,7 @@ PORT=4000
 
 # Ethereum Properties
 # Validator Private key - must start with 0x
-PRIVATE_KEY=0x<PRIVATE_KEY_VALIDATOR>
+PRIVATE_KEY=<PRIVATE_KEY_VALIDATOR>
 
 # Bridgeable Token contract - Home is the sidechain
 HOME_ETHEREUM_PROVIDER_URL=https://rinkeby.infura.io/WugAgm82bU9X5Oh2qltc 

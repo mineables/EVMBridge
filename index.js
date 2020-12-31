@@ -169,6 +169,6 @@ function hashFunction(from, txnHash, foreignAddress, amount) {
 function getValidatorSignature(payload) {
     let web3 = homeWeb3
     // signed by the verifier
-    var sig = web3.eth.accounts.sign(payload, '0x' + process.env.PRIVATE_KEY, true)
+    var sig = web3.eth.accounts.sign(payload, process.env.PRIVATE_KEY, true)
     return sig.signature
 }
