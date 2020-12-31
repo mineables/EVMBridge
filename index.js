@@ -20,7 +20,8 @@ app.use(express.static('web'))
 var erc20Portal, bridgeableToken, erc20
 
 app.listen(process.env.PORT, async () => {
-    console.log('Welcome to TokenPortal')
+    console.log('Welcome to Token Bridge 0.1 alpha')
+    console.log('Running on http://127.0.0.1:' + process.env.PORT)
     homeWeb3.setProvider(process.env.HOME_ETHEREUM_PROVIDER_URL)
     foreignWeb3.setProvider(process.env.FOREIGN_ETHEREUM_PROVIDER_URL)
     erc20Portal = new foreignWeb3.eth.Contract(erc20PortalJson.abi, process.env.FOREIGN_PORTAL_CONTRACT)
