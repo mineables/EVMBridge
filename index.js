@@ -84,8 +84,11 @@ app.get('/transactions/:address', asyncMiddleware(async (request, response, next
 // curl -d '{ "txnHash": "0x83445ad0c995c35eb379218519508363ca60b28c883278b6202a57af723b1752" }' -H "Content-Type: application/json" http://127.0.0.1:4000/foreign/verify
 app.post('/foreign/verify', asyncMiddleware(async (request, response, next) => {
 
+    latest = await homeWeb3.eth.getBlockNumber()
+    latestFrom = latest - LATEST_FROM_BLOCKS
+
     let logs = await erc20Portal.getPastEvents('EnterBridgeEvent', {
-        fromBlock: 0,
+        fromBlock: latestFrom,
         toBlock: 'latest'
     })
 
@@ -119,10 +122,11 @@ app.post('/foreign/verify', asyncMiddleware(async (request, response, next) => {
 // curl -d '{ "txnHash": "0x83445ad0c995c35eb379218519508363ca60b28c883278b6202a57af723b1752" }' -H "Content-Type: application/json" http://127.0.0.1:4000/home/verify
 app.post('/home/verify', asyncMiddleware(async (request, response, next) => {
 
-    console.log(bridgeableToken)
+    latest = await homeWeb3.eth.getBlockNumber()
+    latestFrom = latest - LATEST_FROM_BLOCKS
 
     let logs = await bridgeableToken.getPastEvents('EnterBridgeEvent', {
-        fromBlock: 0,
+        fromBlock: latestFrom,
         toBlock: 'latest'
     })
 
