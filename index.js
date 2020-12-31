@@ -84,7 +84,7 @@ app.get('/transactions/:address', asyncMiddleware(async (request, response, next
 // curl -d '{ "txnHash": "0x83445ad0c995c35eb379218519508363ca60b28c883278b6202a57af723b1752" }' -H "Content-Type: application/json" http://127.0.0.1:4000/foreign/verify
 app.post('/foreign/verify', asyncMiddleware(async (request, response, next) => {
 
-    latest = await homeWeb3.eth.getBlockNumber()
+    latest = await foreignWeb3.eth.getBlockNumber()
     latestFrom = latest - LATEST_FROM_BLOCKS
 
     let logs = await erc20Portal.getPastEvents('EnterBridgeEvent', {
