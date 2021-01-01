@@ -41,7 +41,7 @@ Setup step 2: Side chain native EVM must have enough "Ether" sent to the NativeP
           | ERC20Portal |       | Bridge Network |       |  ERC20.PEG   |
           |             +<------+                +<------+              |
 +-------+ +-------------+       +----------------+       +--------------+
-| ERC20 |                                                                
+| ERC20 |  EVM1 (Mainnet)                                 EVM2 (Chainnet)                                                       
 +-------+                                                                
 ```
 
