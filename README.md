@@ -34,18 +34,18 @@ Setup step 2: Side chain native EVM must have enough "Ether" sent to the NativeP
 5. The NativePortal contract sends 100 "Ether" ( not actually Ether, but the native token on the destination EVM ), which is a 1:1 tether to the 0xBitcoin Token on mainnet.
 6. In reverse, when the user wants to send the funds back to mainnet, she simply calls the NativePortal first, waits for validation from the bridge network and then calls the ERCPortal which will release the tokens from the contract.
 
-## ERC20 -> ERC20
+## ERC20 Portal -> Bridgable ERC20
 ```
           +-------------+       +----------------+       +--------------+
           |             +------>+                +------>+              |
-          | ERC20Portal |       | Bridge Network |       |  ERC20Portal |
+          | ERC20Portal |       | Bridge Network |       |  ERC20.PEG   |
           |             +<------+                +<------+              |
-+-------+ +-------------+       +----------------+       +--------------++-----------+
-| 0xBTC |                                                                | 0xBTC.PEG |
-+-------+                                                                +-----------+
++-------+ +-------------+       +----------------+       +--------------+
+| ERC20 |                                                                
++-------+                                                                
 ```
 
-Transferring value from ERC20 on mainnet to ERC20 on chainnet follows a similar set of steps, except on the chainnet side, ERC20 "Peg" tokens are minted/burned as they enter and exit the EVM.
+Transferring value from ERC20 on mainnet to a Bridgable ERC20 on chainnet follows a similar set of steps, except on the chainnet side, ERC20 "Peg" tokens are minted/burned as they enter and exit the EVM.
 
 # Initial EVM setup
 

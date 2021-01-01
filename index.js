@@ -105,14 +105,14 @@ app.post('/foreign/verify', asyncMiddleware(async (request, response, next) => {
     let nativeTokenAmount = baseTokenAmount * Math.pow(10, 18)
 
     console.log(decimals, baseTokenAmount, nativeTokenAmount)
-    console.log(fromAccount, txnHash, process.env.TOKEN_CONTRACT, tokens)
+    console.log(fromAccount, txnHash, process.env.FOREIGN_PORTAL_CONTRACT, tokens)
 
-    let contentHash = hashFunction(fromAccount, txnHash, process.env.TOKEN_CONTRACT, nativeTokenAmount)
+    let contentHash = hashFunction(fromAccount, txnHash, process.env.FOREIGN_PORTAL_CONTRACT, nativeTokenAmount)
     let signatures = getValidatorSignature(contentHash)
 
     let exitPacket = {}
     exitPacket.transactionHash = txnHash
-    exitPacket.foreignContract = process.env.TOKEN_CONTRACT
+    exitPacket.foreignContract = process.env.FOREIGN_PORTAL_CONTRACT
     exitPacket.tokens = nativeTokenAmount
     exitPacket.signatures = signatures
 
